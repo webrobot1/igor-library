@@ -16,12 +16,8 @@ abstract class PathFinding
             static::$_astar = new AStar(static::$_logic);
         }            
 
-        $start = hrtime(true);
         if($return = static::$_astar->run($from, $to))
-        {
-            
-			Perfomance::set('Sandbox        | расчет поиска пути мс.', (hrtime(true) - $start)/1e+6);
-                    
+        {       
             // удалим точку на которой стоим
             array_shift($return);
         }

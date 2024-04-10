@@ -2,18 +2,25 @@
 // класс для поиска пути Astar
 class DomainLogic implements DomainLogicInterface
 {
+	private static array $_tiles;
+	
     public function __construct()
     {
 
     }
 
+	public static function init(array &$tiles)
+	{
+		$this->_tiles = $tiles;	
+	}
+	
     /**
      * @param Coordinate $node
      * @return Coordinate[]
      */
     public function getAdjacentNodes(mixed $node): iterable
     {    
-        if(!$positions = @Map2D::getTile($node))
+        if(!$positions = $this->_tiles($node))
         {
             throw new Error('имеется ссылка на область '.$node.', но в матрице она отсутствует');
         }    
@@ -24,13 +31,13 @@ class DomainLogic implements DomainLogicInterface
      // здесь можно влхвоащать сложность прохода по этому определенному маршруту из определеннйо клетки
     public function calculateRealCost(mixed $node, mixed $destination): float | int
     {
-        if (!isset(Map2D::getTile($node)[$destination]))
+        if (!isset($this->_tiles($node)[$destination]))
         {
             throw new DomainException('из локации '.$node.' отсутствует путь в '.$destination);
         }
 
         // если есть кто то живой кроме нас сложность прохода этим путем увеличивается
-      return Map2D::getTile($node)[$destination];
+      return $this->_tiles($node)[$destination];
     }
 
     public function calculateEstimatedCost(mixed $fromNode, mixed $toNode): float | int
