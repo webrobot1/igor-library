@@ -9,9 +9,11 @@ class DomainLogic implements DomainLogicInterface
 
     }
 
+	// вообще PHP  nr массив передает по ссылки и выделяет под него память если меняется значение только 
 	public static function init(array &$tiles)
 	{
-		$this->_tiles = $tiles;	
+		PHP::log('Инициализация матрицы поиска пути');
+		static::$_tiles = $tiles;
 	}
 	
     /**
@@ -20,24 +22,24 @@ class DomainLogic implements DomainLogicInterface
      */
     public function getAdjacentNodes(mixed $node): iterable
     {    
-        if(!$positions = $this->_tiles($node))
+        if(empty(static::$_tiles[$node]))
         {
             throw new Error('имеется ссылка на область '.$node.', но в матрице она отсутствует');
         }    
         
-        return array_keys($positions);
+        return array_keys(static::$_tiles[$node]);
     }
 
      // здесь можно влхвоащать сложность прохода по этому определенному маршруту из определеннйо клетки
     public function calculateRealCost(mixed $node, mixed $destination): float | int
     {
-        if (!isset($this->_tiles($node)[$destination]))
+        if (!isset(static::$_tiles[$node][$destination]))
         {
             throw new DomainException('из локации '.$node.' отсутствует путь в '.$destination);
         }
 
         // если есть кто то живой кроме нас сложность прохода этим путем увеличивается
-      return $this->_tiles($node)[$destination];
+      return static::$_tiles[$node][$destination];
     }
 
     public function calculateEstimatedCost(mixed $fromNode, mixed $toNode): float | int
